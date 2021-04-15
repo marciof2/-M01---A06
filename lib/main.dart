@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mvc/count_controller.dart';
 
 void main() {
   runApp(MyApp());
@@ -17,25 +18,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int count = 0;
-
-  add() {
-    setState(() {
-      count++;
-    });
-  }
-
-  minus() {
-    setState(() {
-      count--;
-    });
-  }
-
-  reset() {
-    setState(() {
-      count = 0;
-    });
-  }
+  final controller = CounterController();
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Container(
             alignment: Alignment.center,
             child: Text(
-              '$count',
+              controller.getCounter(),
               style: TextStyle(fontSize: 45, fontWeight: FontWeight.w900),
             ),
           ),
@@ -59,9 +42,24 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          CustomButton(minus, Icons.remove),
-          CustomButton(reset, Icons.autorenew),
-          CustomButton(add, Icons.add),
+          CustomButton(
+            () {
+              setState(() {
+                controller.incrementCounter();
+              });
+            },
+            Icons.add,
+          ),
+          CustomButton(() {
+            setState(() {
+              controller.resetCounter();
+            });
+          }, Icons.autorenew),
+          CustomButton(() {
+            setState(() {
+              controller.decrementCounter();
+            });
+          }, Icons.remove),
         ],
       ),
     );
@@ -71,7 +69,9 @@ class _MyHomePageState extends State<MyHomePage> {
 class CustomButton extends StatelessWidget {
   final Function func;
   final IconData icon;
-  CustomButton(this.func, this.icon, {Key key}) : super(key: key) {}
+
+  CustomButton(this.func, this.icon, {Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
